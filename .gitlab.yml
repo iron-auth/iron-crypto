@@ -1,0 +1,23 @@
+tasks:
+  - name: Set WakaTime API Key
+    command: |
+      echo -e "[settings]\napi_key = $WAKATIME_API_KEY" > ~/.wakatime.cfg
+      source ~/.bashrc
+
+vscode:
+  extensions:
+    - dbaeumer.vscode-eslint
+    - kamikillerto.vscode-colorize
+    - IronGeek.vscode-env
+    - eamodio.gitlens
+    - oderwat.indent-rainbow
+    - shd101wyy.markdown-preview-enhanced
+    - esbenp.prettier-vscode
+    - WakaTime.vscode-wakatime
+    - aaron-bond.better-comments
+    - adpyke.codesnap
+    - fabiospampinato.vscode-todo-plus
+    - Gruntfuggly.todo-tree
+    - golang.go
+    - premparihar.gotestexplorer
+    - rangav.vscode-thunder-client
