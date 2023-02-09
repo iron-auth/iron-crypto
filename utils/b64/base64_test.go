@@ -7,7 +7,7 @@ import (
 	a "github.com/james-elicx/go-utils/assert"
 )
 
-var (
+const (
 	HelloWorldString = "Hello World!"
 	HelloWorldBase64 = "SGVsbG8gV29ybGQh"
 )

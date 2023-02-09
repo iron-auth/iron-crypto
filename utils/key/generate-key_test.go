@@ -10,27 +10,27 @@ import (
 func TestMissingPasswordReturnsError(t *testing.T) {
 	t.Parallel()
 
-	_, err := key.GenerateKey(key.GenerateKeyConfig{})
+	_, err := key.Generate(key.Config{})
 	a.EqualsError(t, err, "password or password buffer is required")
 
-	_, err = key.GenerateKey(key.GenerateKeyConfig{Password: ""})
+	_, err = key.Generate(key.Config{Password: ""})
 	a.EqualsError(t, err, "password or password buffer is required")
 
-	_, err = key.GenerateKey(key.GenerateKeyConfig{PasswordBuffer: nil})
+	_, err = key.Generate(key.Config{PasswordBuffer: nil})
 	a.EqualsError(t, err, "password or password buffer is required")
 }
 
 func TestMissingOptionsReturnsError(t *testing.T) {
 	t.Parallel()
 
-	_, err := key.GenerateKey(key.GenerateKeyConfig{
+	_, err := key.Generate(key.Config{
 		Password: "password",
 	})
 	a.EqualsError(t, err, "missing options")
 
-	_, err = key.GenerateKey(key.GenerateKeyConfig{
+	_, err = key.Generate(key.Config{
 		Password: "password",
-		Options:  key.GenerateKeyConfigOptions{},
+		Options:  key.OptionsConfig{},
 	})
 	a.EqualsError(t, err, "missing options")
 }
@@ -38,9 +38,9 @@ func TestMissingOptionsReturnsError(t *testing.T) {
 func TestInvalidAlgorithmReturnsError(t *testing.T) {
 	t.Parallel()
 
-	_, err := key.GenerateKey(key.GenerateKeyConfig{
+	_, err := key.Generate(key.Config{
 		Password: "password",
-		Options: key.GenerateKeyConfigOptions{
+		Options: key.OptionsConfig{
 			Algorithm: 344,
 		},
 	})
@@ -50,9 +50,9 @@ func TestInvalidAlgorithmReturnsError(t *testing.T) {
 func TestPasswordTooShortReturnsError(t *testing.T) {
 	t.Parallel()
 
-	_, err := key.GenerateKey(key.GenerateKeyConfig{
+	_, err := key.Generate(key.Config{
 		Password: "password",
-		Options:  key.GenerateKeyConfigOptionsDefaults,
+		Options:  key.DefaultOptions,
 	})
 	a.EqualsError(t, err, "password is too short")
 }
@@ -60,9 +60,9 @@ func TestPasswordTooShortReturnsError(t *testing.T) {
 func TestNoSaltOrSaltBitsReturnsError(t *testing.T) {
 	t.Parallel()
 
-	_, err := key.GenerateKey(key.GenerateKeyConfig{
+	_, err := key.Generate(key.Config{
 		Password: "passwordpasswordpasswordpasswordpasswordpasswordpasswordpassword",
-		Options: key.GenerateKeyConfigOptions{
+		Options: key.OptionsConfig{
 			Algorithm:         key.AES256CBC,
 			Iterations:        2,
 			MinPasswordLength: 32,
@@ -70,9 +70,9 @@ func TestNoSaltOrSaltBitsReturnsError(t *testing.T) {
 	})
 	a.EqualsError(t, err, "missing salt and salt bits")
 
-	_, err = key.GenerateKey(key.GenerateKeyConfig{
+	_, err = key.Generate(key.Config{
 		Password: "passwordpasswordpasswordpasswordpasswordpasswordpasswordpassword",
-		Options: key.GenerateKeyConfigOptions{
+		Options: key.OptionsConfig{
 			Algorithm:         key.AES256CBC,
 			Iterations:        2,
 			MinPasswordLength: 32,
@@ -83,7 +83,7 @@ func TestNoSaltOrSaltBitsReturnsError(t *testing.T) {
 	a.EqualsError(t, err, "bits size must be less than 2147483648")
 }
 
-func isValidKey(t *testing.T, k key.Key, fromBuffer bool) {
+func isValidKey(t *testing.T, k key.GeneratedKey, fromBuffer bool) {
 	a.NotEquals(t, k.Algorithm, "")
 	a.Equals(t, k.Algorithm, key.AES256CBC)
 	a.NotEquals(t, k.Key, nil)
@@ -100,9 +100,9 @@ func isValidKey(t *testing.T, k key.Key, fromBuffer bool) {
 func TestInvalidIvLengthReturnsError(t *testing.T) {
 	t.Parallel()
 
-	_, err := key.GenerateKey(key.GenerateKeyConfig{
+	_, err := key.Generate(key.Config{
 		Password: "passwordpasswordpasswordpasswordpasswordpasswordpasswordpassword",
-		Options: key.GenerateKeyConfigOptions{
+		Options: key.OptionsConfig{
 			Algorithm:         key.AES256CBC,
 			Iterations:        2,
 			MinPasswordLength: 32,
@@ -118,18 +118,18 @@ func TestGeneratesKeyAndSaltWithPassword(t *testing.T) {
 	t.Parallel()
 
 	// without specified iv
-	k, err := key.GenerateKey(key.GenerateKeyConfig{
+	k, err := key.Generate(key.Config{
 		Password: "passwordpasswordpasswordpasswordpasswordpasswordpasswordpassword",
-		Options:  key.GenerateKeyConfigOptionsDefaults,
+		Options:  key.DefaultOptions,
 	})
 
 	a.Equals(t, err, nil)
 	isValidKey(t, k, false)
 
 	// with specified iv
-	k, err = key.GenerateKey(key.GenerateKeyConfig{
+	k, err = key.Generate(key.Config{
 		Password: "passwordpasswordpasswordpasswordpasswordpasswordpasswordpassword",
-		Options: key.GenerateKeyConfigOptions{
+		Options: key.OptionsConfig{
 			Algorithm:         key.AES256CBC,
 			Iterations:        2,
 			MinPasswordLength: 32,
@@ -147,17 +147,17 @@ func TestGeneratesKeyAndSaltWithPasswordBuffer(t *testing.T) {
 	t.Parallel()
 
 	// too short of a buffer returns error
-	_, err := key.GenerateKey(key.GenerateKeyConfig{
+	_, err := key.Generate(key.Config{
 		PasswordBuffer: []byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16},
-		Options:        key.GenerateKeyConfigOptionsDefaults,
+		Options:        key.DefaultOptions,
 	})
 
 	a.EqualsError(t, err, "key (password) buffer is too short")
 
 	// with long enough buffer
-	k, err := key.GenerateKey(key.GenerateKeyConfig{
+	k, err := key.Generate(key.Config{
 		PasswordBuffer: []byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32},
-		Options:        key.GenerateKeyConfigOptionsDefaults,
+		Options:        key.DefaultOptions,
 	})
 
 	a.Equals(t, err, nil)
@@ -165,7 +165,7 @@ func TestGeneratesKeyAndSaltWithPasswordBuffer(t *testing.T) {
 }
 
 var GeneratedKeyText = "passwordpasswordpasswordpasswordpasswordpasswordpasswordpassword"
-var GeneratedKey = key.Key{
+var GeneratedKey = key.GeneratedKey{
 	Algorithm: key.AES256CBC,
 	Key:       []byte{0xf3, 0x23, 0x9f, 0x37, 0x55, 0x29, 0x34, 0xdd, 0xfb, 0xb3, 0x61, 0xbe, 0xa4, 0x7a, 0xab, 0xc7, 0x6f, 0x62, 0x1e, 0xd2, 0x49, 0x25, 0x0e, 0x1d, 0x9d, 0xf5, 0x38, 0x20, 0x4b, 0xf1, 0x63, 0x47},
 	Salt:      "b27a06366ace6bb1560ea039a5595c352a429b87f3982542da9e830a32f5468e",
@@ -175,9 +175,9 @@ var GeneratedKey = key.Key{
 func TestGeneratesKeyMatchingHapiIron(t *testing.T) {
 	t.Parallel()
 
-	k, err := key.GenerateKey(key.GenerateKeyConfig{
+	k, err := key.Generate(key.Config{
 		Password: GeneratedKeyText,
-		Options: key.GenerateKeyConfigOptions{
+		Options: key.OptionsConfig{
 			Algorithm:         key.AES256CBC,
 			Iterations:        2,
 			MinPasswordLength: 32,

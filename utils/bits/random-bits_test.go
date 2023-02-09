@@ -7,11 +7,12 @@ import (
 	a "github.com/james-elicx/go-utils/assert"
 )
 
-var (
+const (
 	HelloWorldString = "Hello World!"
-	HelloWorldBytes  = []byte{72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100, 33}
 	HelloWorldHex    = "48656c6c6f20576f726c6421"
 )
+
+var HelloWorldBytes = []byte{72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100, 33}
 
 func TestSizeError(t *testing.T) {
 	t.Parallel()
