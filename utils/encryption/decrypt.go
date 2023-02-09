@@ -33,7 +33,7 @@ func aes256cbcDecrypt(k key.GeneratedKey, cipherText []byte) (string, error) {
 		return "", iron.ErrCreatingCipher
 	}
 
-	plainText := make([]byte, len(cipherText))
+	plainText := str.MakeBuffer(len(cipherText))
 
 	mode := cipher.NewCBCDecrypter(block, k.IV)
 	mode.CryptBlocks(plainText, cipherText)
@@ -47,7 +47,7 @@ func aes128ctrDecrypt(k key.GeneratedKey, cipherText []byte) (string, error) {
 		return "", iron.ErrCreatingCipher
 	}
 
-	plainText := make([]byte, len(cipherText))
+	plainText := str.MakeBuffer(len(cipherText))
 
 	mode := cipher.NewCFBDecrypter(block, k.IV)
 	mode.XORKeyStream(plainText, cipherText)

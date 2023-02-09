@@ -20,3 +20,10 @@ func TestFromBuffer(t *testing.T) {
 	decoded := str.FromBuffer([]byte("Hello World!"))
 	a.Equals(t, decoded, "Hello World!")
 }
+
+func TestMakeBuffer(t *testing.T) {
+	t.Parallel()
+
+	buffer := str.MakeBuffer(10)
+	a.Equals(t, len(buffer), 10)
+}

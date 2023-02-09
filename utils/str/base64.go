@@ -8,7 +8,7 @@ import (
 
 // Encode a string to base64
 func ToBase64(data string) string {
-	return base64.URLEncoding.EncodeToString([]byte(data))
+	return base64.URLEncoding.EncodeToString(ToBuffer(data))
 }
 
 // Decode a base64 string to a string
@@ -17,5 +17,5 @@ func FromBase64(data string) (string, error) {
 	if err != nil {
 		return "", iron.ErrBase64Decode
 	}
-	return string(decoded), nil
+	return FromBuffer(decoded), nil
 }

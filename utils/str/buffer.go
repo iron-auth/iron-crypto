@@ -9,3 +9,7 @@ func ToBuffer(data string) []byte {
 func FromBuffer(data []byte) string {
 	return string(data)
 }
+
+func MakeBuffer(length int) []byte {
+	return make([]byte, length)
+}

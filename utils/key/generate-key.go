@@ -5,6 +5,7 @@ import (
 
 	"github.com/iron-auth/iron-tokens"
 	"github.com/iron-auth/iron-tokens/utils/bits"
+	"github.com/iron-auth/iron-tokens/utils/str"
 	"golang.org/x/crypto/pbkdf2"
 )
 
@@ -115,7 +116,7 @@ func Generate(cfg Config) (GeneratedKey, error) {
 		}
 
 		// generate a new key
-		dk := pbkdf2.Key([]byte(cfg.Password), []byte(salt), cfg.Options.Iterations, algo.keyBits/8, sha1.New)
+		dk := pbkdf2.Key(str.ToBuffer(cfg.Password), str.ToBuffer(salt), cfg.Options.Iterations, algo.keyBits/8, sha1.New)
 
 		result.Key = dk
 		result.Salt = salt

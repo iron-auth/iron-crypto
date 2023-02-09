@@ -7,6 +7,7 @@ import (
 	"github.com/iron-auth/iron-tokens"
 	"github.com/iron-auth/iron-tokens/utils/bits"
 	"github.com/iron-auth/iron-tokens/utils/key"
+	"github.com/iron-auth/iron-tokens/utils/str"
 )
 
 type EncryptedData struct {
@@ -37,8 +38,8 @@ func aes256cbcEncrypt(k key.GeneratedKey, message string) (EncryptedData, error)
 		return EncryptedData{}, iron.ErrCreatingCipher
 	}
 
-	plainText := bits.Pad([]byte(message), aes.BlockSize)
-	cipherText := make([]byte, len(plainText))
+	plainText := bits.Pad(str.ToBuffer(message), aes.BlockSize)
+	cipherText := str.MakeBuffer(len(plainText))
 
 	mode := cipher.NewCBCEncrypter(block, k.IV)
 	mode.CryptBlocks(cipherText, plainText)
@@ -55,8 +56,8 @@ func aes128ctrEncrypt(k key.GeneratedKey, message string) (EncryptedData, error)
 		return EncryptedData{}, iron.ErrCreatingCipher
 	}
 
-	plainText := []byte(message)
-	cipherText := make([]byte, len(plainText))
+	plainText := str.ToBuffer(message)
+	cipherText := str.MakeBuffer(len(plainText))
 
 	mode := cipher.NewCFBEncrypter(block, k.IV)
 	mode.XORKeyStream(cipherText, plainText)
