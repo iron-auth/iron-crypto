@@ -109,7 +109,7 @@ func Generate(cfg Config) (GeneratedKey, error) {
 			// generate a new salt
 			newSalt, err := bits.RandomSalt(cfg.Options.SaltBits)
 			if err != nil {
-				return GeneratedKey{}, iron.ErrGeneratingSalt
+				return GeneratedKey{}, err
 			}
 			salt = newSalt
 		}

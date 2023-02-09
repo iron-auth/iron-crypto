@@ -61,7 +61,7 @@ func RandomSalt(bits int) (string, error) {
 	b, err := RandomBits(bits)
 	// TODO: Is there a way to force the reader to error to enter this block during tests?
 	if err != nil {
-		return "", iron.ErrGeneratingSalt
+		return "", err
 	}
 
 	salt := BytesToHex(b)
