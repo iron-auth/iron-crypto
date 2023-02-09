@@ -28,7 +28,7 @@ func Encrypt(cfg key.Config, message string) (EncryptedData, error) {
 	case key.AES128CTR:
 		return aes128ctrEncrypt(k, message)
 	default:
-		return EncryptedData{}, iron.ErrUnsupportedAlgorithm
+		return EncryptedData{}, iron.ErrInvalidEncryptionAlgorithm
 	}
 }
 

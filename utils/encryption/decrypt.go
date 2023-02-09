@@ -23,7 +23,7 @@ func Decrypt(cfg key.Config, cipherText []byte) (string, error) {
 	case key.AES128CTR:
 		return aes128ctrDecrypt(k, cipherText)
 	default:
-		return "", iron.ErrUnsupportedAlgorithm
+		return "", iron.ErrInvalidEncryptionAlgorithm
 	}
 }
 

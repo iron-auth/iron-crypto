@@ -60,5 +60,5 @@ func TestSha256DecryptReturnsError(t *testing.T) {
 		},
 	}, "Hello World!")
 
-	a.Equals(t, err, iron.ErrUnsupportedAlgorithm)
+	a.Equals(t, err, iron.ErrInvalidEncryptionAlgorithm)
 }
