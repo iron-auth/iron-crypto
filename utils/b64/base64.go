@@ -1,14 +1,14 @@
-package utils
+package b64
 
 import (
 	"encoding/base64"
 )
 
-func Base64Encode(data string) string {
+func Encode(data string) string {
 	return base64.URLEncoding.EncodeToString([]byte(data))
 }
 
-func Base64Decode(data string) (string, error) {
+func Decode(data string) (string, error) {
 	decoded, err := base64.URLEncoding.DecodeString(data)
 	return string(decoded), err
 }
