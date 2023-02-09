@@ -9,25 +9,27 @@ import (
 )
 
 const (
-	HelloWorldString = "Hello World!"
-	HelloWorldBase64 = "SGVsbG8gV29ybGQh"
+	HelloWorldString         = "Hello World! Hello World!"
+	HelloWorldBase64         = "SGVsbG8gV29ybGQhIEhlbGxvIFdvcmxkIQ=="
+	HelloWorldModifiedBase64 = "SGVsbG8gV29ybGQhIEhlbGxvIFdvcmxkIQ"
 )
 
 func TestEncode(t *testing.T) {
 	t.Parallel()
 
-	encoded := str.ToBase64(HelloWorldString)
+	encoded := str.ToBase64(str.ToBuffer(HelloWorldString))
 
-	a.Equals(t, encoded, HelloWorldBase64)
+	a.NotEquals(t, encoded, HelloWorldBase64)
+	a.Equals(t, encoded, HelloWorldModifiedBase64)
 }
 
 func TestDecode(t *testing.T) {
 	t.Parallel()
 
-	decoded, err := str.FromBase64(HelloWorldBase64)
+	decoded, err := str.FromBase64(HelloWorldModifiedBase64)
 
 	a.Equals(t, err, nil)
-	a.Equals(t, decoded, HelloWorldString)
+	a.EqualsArray(t, decoded, str.ToBuffer(HelloWorldString))
 }
 
 func TestDecodeError(t *testing.T) {

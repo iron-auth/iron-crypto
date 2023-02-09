@@ -2,20 +2,34 @@ package str
 
 import (
 	"encoding/base64"
+	"strings"
 
 	"github.com/iron-auth/iron-tokens"
 )
 
 // Encode a string to base64
-func ToBase64(data string) string {
-	return base64.URLEncoding.EncodeToString(ToBuffer(data))
+func ToBase64(data []byte) string {
+	b64 := base64.URLEncoding.EncodeToString(data)
+
+	b64 = strings.ReplaceAll(b64, "+", "-")
+	b64 = strings.ReplaceAll(b64, "/", "_")
+	b64 = strings.ReplaceAll(b64, "=", "")
+
+	return b64
 }
 
 // Decode a base64 string to a string
-func FromBase64(data string) (string, error) {
-	decoded, err := base64.URLEncoding.DecodeString(data)
+func FromBase64(data string) ([]byte, error) {
+	corrected := data
+
+	corrected = strings.ReplaceAll(corrected, "-", "+")
+	corrected = strings.ReplaceAll(corrected, "_", "/")
+
+	corrected = corrected + strings.Repeat("=", (4-(len(data)%4))%4)
+
+	decoded, err := base64.URLEncoding.DecodeString(corrected)
 	if err != nil {
-		return "", iron.ErrBase64Decode
+		return nil, iron.ErrBase64Decode
 	}
-	return FromBuffer(decoded), nil
+	return decoded, nil
 }
