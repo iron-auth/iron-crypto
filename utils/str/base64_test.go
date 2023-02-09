@@ -1,9 +1,9 @@
-package b64_test
+package str_test
 
 import (
 	"testing"
 
-	"github.com/iron-auth/iron-tokens/utils/b64"
+	"github.com/iron-auth/iron-tokens/utils/str"
 	a "github.com/james-elicx/go-utils/assert"
 )
 
@@ -15,7 +15,7 @@ const (
 func TestEncode(t *testing.T) {
 	t.Parallel()
 
-	encoded := b64.Encode(HelloWorldString)
+	encoded := str.ToBase64(HelloWorldString)
 
 	a.Equals(t, encoded, HelloWorldBase64)
 }
@@ -23,7 +23,7 @@ func TestEncode(t *testing.T) {
 func TestDecode(t *testing.T) {
 	t.Parallel()
 
-	decoded, err := b64.Decode(HelloWorldBase64)
+	decoded, err := str.FromBase64(HelloWorldBase64)
 
 	a.Equals(t, err, nil)
 	a.Equals(t, decoded, HelloWorldString)
@@ -32,7 +32,7 @@ func TestDecode(t *testing.T) {
 func TestDecodeError(t *testing.T) {
 	t.Parallel()
 
-	_, err := b64.Decode("SGVsbG8gV29ybGQh!")
+	_, err := str.FromBase64("SGVsbG8gV29ybGQh!")
 
 	a.EqualsError(t, err, "illegal base64 data at input byte 16")
 }
