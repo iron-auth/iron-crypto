@@ -2,15 +2,11 @@ package key
 
 import (
 	"crypto/sha1"
-	"errors"
 
+	"github.com/iron-auth/iron-tokens"
 	"github.com/iron-auth/iron-tokens/utils/bits"
 	"golang.org/x/crypto/pbkdf2"
 )
-
-// https://github.com/brc-dd/iron-webcrypto/blob/main/src/index.ts
-// https://github.com/hapijs/iron/blob/master/lib/index.js
-// https://gist.github.com/enyachoke/5c60f5eebed693d9b4bacddcad693b47
 
 // Key generation options.
 type Config struct {
@@ -78,13 +74,13 @@ func isOptionsUndefined(options OptionsConfig) bool {
 func Generate(cfg Config) (GeneratedKey, error) {
 	// check password is specificed
 	if cfg.Password == "" && cfg.PasswordBuffer == nil {
-		return GeneratedKey{}, errors.New("password or password buffer is required")
+		return GeneratedKey{}, iron.ErrPasswordRequired
 	}
 	if isOptionsUndefined(cfg.Options) {
-		return GeneratedKey{}, errors.New("missing options")
+		return GeneratedKey{}, iron.ErrMissingOptions
 	}
 	if !isAlgorithmValid(cfg.Options.Algorithm) {
-		return GeneratedKey{}, errors.New("invalid algorithm")
+		return GeneratedKey{}, iron.ErrUnsupportedAlgorithm
 	}
 
 	algo := algorithms[cfg.Options.Algorithm]
@@ -100,20 +96,20 @@ func Generate(cfg Config) (GeneratedKey, error) {
 	if cfg.Password != "" {
 		// check password length is valid
 		if len(cfg.Password) < cfg.Options.MinPasswordLength {
-			return GeneratedKey{}, errors.New("password is too short")
+			return GeneratedKey{}, iron.ErrPasswordTooShort
 		}
 
 		salt := cfg.Options.Salt
 		// check salt is specified
 		if salt == "" {
 			if cfg.Options.SaltBits == 0 {
-				return GeneratedKey{}, errors.New("missing salt and salt bits")
+				return GeneratedKey{}, iron.ErrMissingSalt
 			}
 
 			// generate a new salt
 			newSalt, err := bits.RandomSalt(cfg.Options.SaltBits)
 			if err != nil {
-				return GeneratedKey{}, err
+				return GeneratedKey{}, iron.ErrGeneratingSalt
 			}
 			salt = newSalt
 		}
@@ -126,7 +122,7 @@ func Generate(cfg Config) (GeneratedKey, error) {
 	} else if cfg.PasswordBuffer != nil {
 		// check password length is valid
 		if len(cfg.PasswordBuffer) < algo.keyBits/8 {
-			return GeneratedKey{}, errors.New("key (password) buffer is too short")
+			return GeneratedKey{}, iron.ErrPasswordBufferTooShort
 		}
 
 		result.Key = cfg.PasswordBuffer
@@ -135,7 +131,7 @@ func Generate(cfg Config) (GeneratedKey, error) {
 
 	if cfg.Options.IV != nil {
 		if (len(cfg.Options.IV) * 8) != algo.ivBits {
-			return GeneratedKey{}, errors.New("invalid iv length")
+			return GeneratedKey{}, iron.ErrInvalidIvLength
 		}
 
 		result.IV = cfg.Options.IV
@@ -143,7 +139,7 @@ func Generate(cfg Config) (GeneratedKey, error) {
 		// generate a new IV
 		iv, err := bits.RandomBits(algo.ivBits)
 		if err != nil {
-			return GeneratedKey{}, err
+			return GeneratedKey{}, iron.ErrGeneratingBytes
 		}
 
 		result.IV = iv

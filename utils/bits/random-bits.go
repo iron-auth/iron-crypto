@@ -2,21 +2,22 @@ package bits
 
 import (
 	"crypto/rand"
-	"errors"
 	"fmt"
 	"math"
+
+	"github.com/iron-auth/iron-tokens"
 )
 
 // Check if the given size is valid
 func isValidSize(size int) error {
 	if size < 1 {
-		return errors.New("bits size must be greater than 0")
+		return iron.ErrInvalidBitsSize
 	}
 
 	// this is the max size of an `ArrayBuffer` in javascript (2^31 - 1) on 32-bit systems
 	// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Invalid_array_length
 	if size > (2147483648 / 8) {
-		return errors.New("bits size must be less than 2147483648")
+		return iron.ErrInvalidBitsSize
 	}
 
 	return nil
@@ -30,8 +31,11 @@ func RandomBytes(size int) ([]byte, error) {
 
 	buffer := make([]byte, size)
 	_, err := rand.Read(buffer)
+	if err != nil {
+		return nil, iron.ErrGeneratingBytes
+	}
 
-	return buffer, err
+	return buffer, nil
 }
 
 // Generate a random bytes array for the given number of bits
@@ -57,7 +61,7 @@ func RandomSalt(bits int) (string, error) {
 	b, err := RandomBits(bits)
 	// TODO: Is there a way to force the reader to error to enter this block during tests?
 	if err != nil {
-		return "", err
+		return "", iron.ErrGeneratingSalt
 	}
 
 	salt := BytesToHex(b)

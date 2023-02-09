@@ -3,6 +3,7 @@ package key_test
 import (
 	"testing"
 
+	"github.com/iron-auth/iron-tokens"
 	"github.com/iron-auth/iron-tokens/utils/key"
 	a "github.com/james-elicx/go-utils/assert"
 )
@@ -11,13 +12,13 @@ func TestMissingPasswordReturnsError(t *testing.T) {
 	t.Parallel()
 
 	_, err := key.Generate(key.Config{})
-	a.EqualsError(t, err, "password or password buffer is required")
+	a.EqualsError(t, err, iron.ErrPasswordRequired)
 
 	_, err = key.Generate(key.Config{Password: ""})
-	a.EqualsError(t, err, "password or password buffer is required")
+	a.EqualsError(t, err, iron.ErrPasswordRequired)
 
 	_, err = key.Generate(key.Config{PasswordBuffer: nil})
-	a.EqualsError(t, err, "password or password buffer is required")
+	a.EqualsError(t, err, iron.ErrPasswordRequired)
 }
 
 func TestMissingOptionsReturnsError(t *testing.T) {
@@ -26,13 +27,13 @@ func TestMissingOptionsReturnsError(t *testing.T) {
 	_, err := key.Generate(key.Config{
 		Password: "password",
 	})
-	a.EqualsError(t, err, "missing options")
+	a.EqualsError(t, err, iron.ErrMissingOptions)
 
 	_, err = key.Generate(key.Config{
 		Password: "password",
 		Options:  key.OptionsConfig{},
 	})
-	a.EqualsError(t, err, "missing options")
+	a.EqualsError(t, err, iron.ErrMissingOptions)
 }
 
 func TestInvalidAlgorithmReturnsError(t *testing.T) {
@@ -44,7 +45,7 @@ func TestInvalidAlgorithmReturnsError(t *testing.T) {
 			Algorithm: 344,
 		},
 	})
-	a.EqualsError(t, err, "invalid algorithm")
+	a.EqualsError(t, err, iron.ErrUnsupportedAlgorithm)
 }
 
 func TestPasswordTooShortReturnsError(t *testing.T) {
@@ -54,7 +55,7 @@ func TestPasswordTooShortReturnsError(t *testing.T) {
 		Password: "password",
 		Options:  key.DefaultOptions,
 	})
-	a.EqualsError(t, err, "password is too short")
+	a.EqualsError(t, err, iron.ErrPasswordTooShort)
 }
 
 func TestNoSaltOrSaltBitsReturnsError(t *testing.T) {
@@ -68,7 +69,7 @@ func TestNoSaltOrSaltBitsReturnsError(t *testing.T) {
 			MinPasswordLength: 32,
 		},
 	})
-	a.EqualsError(t, err, "missing salt and salt bits")
+	a.EqualsError(t, err, iron.ErrMissingSalt)
 
 	_, err = key.Generate(key.Config{
 		Password: "passwordpasswordpasswordpasswordpasswordpasswordpasswordpassword",
@@ -80,7 +81,7 @@ func TestNoSaltOrSaltBitsReturnsError(t *testing.T) {
 			Salt:              "",
 		},
 	})
-	a.EqualsError(t, err, "bits size must be less than 2147483648")
+	a.EqualsError(t, err, iron.ErrInvalidBitsSize)
 }
 
 func isValidKey(t *testing.T, k key.GeneratedKey, fromBuffer bool) {
@@ -111,7 +112,7 @@ func TestInvalidIvLengthReturnsError(t *testing.T) {
 			IV:                []byte{1, 2, 3},
 		},
 	})
-	a.EqualsError(t, err, "invalid iv length")
+	a.EqualsError(t, err, iron.ErrInvalidIvLength)
 }
 
 func TestGeneratesKeyAndSaltWithPassword(t *testing.T) {
@@ -152,7 +153,7 @@ func TestGeneratesKeyAndSaltWithPasswordBuffer(t *testing.T) {
 		Options:        key.DefaultOptions,
 	})
 
-	a.EqualsError(t, err, "key (password) buffer is too short")
+	a.EqualsError(t, err, iron.ErrPasswordBufferTooShort)
 
 	// with long enough buffer
 	k, err := key.Generate(key.Config{
