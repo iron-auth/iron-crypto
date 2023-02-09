@@ -9,10 +9,10 @@ import (
 	a "github.com/james-elicx/go-utils/assert"
 )
 
-func TestAes256cbcEncrypt(t *testing.T) {
+func TestAes256cbcDecrypt(t *testing.T) {
 	t.Parallel()
 
-	data, err := encryption.Encrypt(key.Config{
+	data, err := encryption.Decrypt(key.Config{
 		Password: DecryptedPassword,
 		Options: key.OptionsConfig{
 			Algorithm:         key.AES256CBC,
@@ -22,21 +22,16 @@ func TestAes256cbcEncrypt(t *testing.T) {
 			Salt:              Aes256cbcGeneratedKey.Salt,
 			IV:                Aes256cbcGeneratedKey.IV,
 		},
-	}, DecryptedMessage)
+	}, Aes256cbcEncryptedPassword)
 
 	a.Equals(t, err, nil)
-	a.EqualsArray(t, data.Encrypted, Aes256cbcEncryptedPassword)
-
-	a.Equals(t, data.Key.Algorithm, Aes256cbcGeneratedKey.Algorithm)
-	a.EqualsArray(t, data.Key.Key, Aes256cbcGeneratedKey.Key)
-	a.Equals(t, data.Key.Salt, Aes256cbcGeneratedKey.Salt)
-	a.EqualsArray(t, data.Key.IV, Aes256cbcGeneratedKey.IV)
+	a.Equals(t, data, DecryptedMessage)
 }
 
-func TestAes128ctrEncrypt(t *testing.T) {
+func TestAes128ctrDecrypt(t *testing.T) {
 	t.Parallel()
 
-	data, err := encryption.Encrypt(key.Config{
+	data, err := encryption.Decrypt(key.Config{
 		Password: DecryptedPassword,
 		Options: key.OptionsConfig{
 			Algorithm:         key.AES128CTR,
@@ -46,18 +41,13 @@ func TestAes128ctrEncrypt(t *testing.T) {
 			Salt:              Aes128ctrGeneratedKey.Salt,
 			IV:                Aes128ctrGeneratedKey.IV,
 		},
-	}, DecryptedMessage)
+	}, Aes128ctrEncryptedPassword)
 
 	a.Equals(t, err, nil)
-	a.EqualsArray(t, data.Encrypted, Aes128ctrEncryptedPassword)
-
-	a.Equals(t, data.Key.Algorithm, Aes128ctrGeneratedKey.Algorithm)
-	a.EqualsArray(t, data.Key.Key, Aes128ctrGeneratedKey.Key)
-	a.Equals(t, data.Key.Salt, Aes128ctrGeneratedKey.Salt)
-	a.EqualsArray(t, data.Key.IV, Aes128ctrGeneratedKey.IV)
+	a.Equals(t, data, DecryptedMessage)
 }
 
-func TestSha256EncryptReturnsError(t *testing.T) {
+func TestSha256DecryptReturnsError(t *testing.T) {
 	t.Parallel()
 
 	_, err := encryption.Encrypt(key.Config{
@@ -68,7 +58,7 @@ func TestSha256EncryptReturnsError(t *testing.T) {
 			MinPasswordLength: 32,
 			SaltBits:          256,
 		},
-	}, DecryptedMessage)
+	}, "Hello World!")
 
 	a.Equals(t, err, iron.ErrUnsupportedAlgorithm)
 }
