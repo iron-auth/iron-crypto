@@ -22,7 +22,7 @@ type Config struct {
 // Encryption options.
 type OptionsConfig struct {
 	// AES128CTR | AES256CBC | SHA256
-	Algorithm algorithm
+	Algorithm Algorithm
 	// Total number of iterations to use. More iterations are more secure but slower.
 	Iterations int
 	// Minimum password length. Shorter passwords are less secure.
@@ -39,7 +39,7 @@ type OptionsConfig struct {
 // Key generation result.
 type GeneratedKey struct {
 	// AES128CTR | AES256CBC | SHA256
-	Algorithm algorithm
+	Algorithm Algorithm
 	// Encryption key.
 	Key []byte
 	// Salt used.
@@ -58,8 +58,15 @@ type GeneratedKey struct {
 
 var (
 	// Default options to use when generating a key.
-	DefaultOptions = OptionsConfig{
+	DefaultEncryption = OptionsConfig{
 		Algorithm:         AES256CBC,
+		Iterations:        1,
+		MinPasswordLength: 32,
+		SaltBits:          256,
+	}
+	// Default options to use when generating a key for integrity.
+	DefaultIntegrity = OptionsConfig{
+		Algorithm:         SHA256,
 		Iterations:        1,
 		MinPasswordLength: 32,
 		SaltBits:          256,
@@ -131,10 +138,6 @@ func Generate(cfg Config) (GeneratedKey, error) {
 	}
 
 	if cfg.Options.IV != nil {
-		if (len(cfg.Options.IV) * 8) != algo.ivBits {
-			return GeneratedKey{}, iron.ErrInvalidIvLength
-		}
-
 		result.IV = cfg.Options.IV
 	} else if algo.ivBits > 0 {
 		// generate a new IV
