@@ -5,19 +5,19 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/iron-auth/iron-tokens"
+	"github.com/iron-auth/iron-crypto/ironerrors"
 )
 
 // Check if the given size is valid
 func isValidSize(size int) error {
 	if size < 1 {
-		return iron.ErrInvalidBitsSize
+		return ironerrors.ErrInvalidBitsSize
 	}
 
 	// this is the max size of an `ArrayBuffer` in javascript (2^31 - 1) on 32-bit systems
 	// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Invalid_array_length
 	if size > (2147483648 / 8) {
-		return iron.ErrInvalidBitsSize
+		return ironerrors.ErrInvalidBitsSize
 	}
 
 	return nil
@@ -32,7 +32,7 @@ func RandomBytes(size int) ([]byte, error) {
 	buffer := make([]byte, size)
 	_, err := rand.Read(buffer)
 	if err != nil {
-		return nil, iron.ErrGeneratingBytes
+		return nil, ironerrors.ErrGeneratingBytes
 	}
 
 	return buffer, nil

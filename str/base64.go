@@ -4,12 +4,12 @@ import (
 	"encoding/base64"
 	"strings"
 
-	"github.com/iron-auth/iron-tokens"
+	"github.com/iron-auth/iron-crypto/ironerrors"
 )
 
 // Encode a string to base64
 func ToBase64(data []byte) string {
-	b64 := base64.URLEncoding.EncodeToString(data)
+	b64 := base64.StdEncoding.EncodeToString(data)
 
 	b64 = strings.ReplaceAll(b64, "+", "-")
 	b64 = strings.ReplaceAll(b64, "/", "_")
@@ -27,9 +27,9 @@ func FromBase64(data string) ([]byte, error) {
 
 	corrected = corrected + strings.Repeat("=", (4-(len(data)%4))%4)
 
-	decoded, err := base64.URLEncoding.DecodeString(corrected)
+	decoded, err := base64.StdEncoding.DecodeString(corrected)
 	if err != nil {
-		return nil, iron.ErrBase64Decode
+		return nil, ironerrors.ErrBase64Decode
 	}
 	return decoded, nil
 }

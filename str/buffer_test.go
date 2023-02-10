@@ -3,7 +3,7 @@ package str_test
 import (
 	"testing"
 
-	"github.com/iron-auth/iron-tokens/utils/str"
+	"github.com/iron-auth/iron-crypto/str"
 	a "github.com/james-elicx/go-utils/assert"
 )
 

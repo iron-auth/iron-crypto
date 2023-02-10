@@ -3,8 +3,8 @@ package str_test
 import (
 	"testing"
 
-	"github.com/iron-auth/iron-tokens"
-	"github.com/iron-auth/iron-tokens/utils/str"
+	"github.com/iron-auth/iron-crypto/ironerrors"
+	"github.com/iron-auth/iron-crypto/str"
 	a "github.com/james-elicx/go-utils/assert"
 )
 
@@ -37,5 +37,5 @@ func TestDecodeError(t *testing.T) {
 
 	_, err := str.FromBase64("SGVsbG8gV29ybGQh!")
 
-	a.EqualsError(t, err, iron.ErrBase64Decode)
+	a.EqualsError(t, err, ironerrors.ErrBase64Decode)
 }

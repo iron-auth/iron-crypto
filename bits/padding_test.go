@@ -3,7 +3,7 @@ package bits_test
 import (
 	"testing"
 
-	"github.com/iron-auth/iron-tokens/utils/bits"
+	"github.com/iron-auth/iron-crypto/bits"
 	a "github.com/james-elicx/go-utils/assert"
 )
 

@@ -3,8 +3,8 @@ package bits_test
 import (
 	"testing"
 
-	"github.com/iron-auth/iron-tokens"
-	"github.com/iron-auth/iron-tokens/utils/bits"
+	"github.com/iron-auth/iron-crypto/bits"
+	"github.com/iron-auth/iron-crypto/ironerrors"
 	a "github.com/james-elicx/go-utils/assert"
 )
 
@@ -19,16 +19,16 @@ func TestSizeError(t *testing.T) {
 	t.Parallel()
 
 	_, err := bits.RandomBits(0)
-	a.EqualsError(t, err, iron.ErrInvalidBitsSize)
+	a.EqualsError(t, err, ironerrors.ErrInvalidBitsSize)
 
 	_, err = bits.RandomBits(99999999999999)
-	a.EqualsError(t, err, iron.ErrInvalidBitsSize)
+	a.EqualsError(t, err, ironerrors.ErrInvalidBitsSize)
 
 	_, err = bits.RandomBytes(0)
-	a.EqualsError(t, err, iron.ErrInvalidBitsSize)
+	a.EqualsError(t, err, ironerrors.ErrInvalidBitsSize)
 
 	_, err = bits.RandomBytes(99999999999999)
-	a.EqualsError(t, err, iron.ErrInvalidBitsSize)
+	a.EqualsError(t, err, ironerrors.ErrInvalidBitsSize)
 }
 
 func TestGetRandomBits(t *testing.T) {
