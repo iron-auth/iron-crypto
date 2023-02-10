@@ -7,7 +7,7 @@ This is a Golang implementation of [@hapi/iron](https://hapi.dev/module/iron/) a
 To get started with Iron Crypto, add the module to your go project using the following command:
 
 ```bash
-go get github.com/iron-auth/iron-crypto
+go get github.com/iron-auth/iron-crypto@v1
 ```
 
 ## Usage
