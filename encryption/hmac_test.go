@@ -3,9 +3,9 @@ package encryption_test
 import (
 	"testing"
 
-	"github.com/iron-auth/iron-tokens"
-	"github.com/iron-auth/iron-tokens/utils/encryption"
-	"github.com/iron-auth/iron-tokens/utils/key"
+	"github.com/iron-auth/iron-crypto/encryption"
+	"github.com/iron-auth/iron-crypto/ironerrors"
+	"github.com/iron-auth/iron-crypto/key"
 	a "github.com/james-elicx/go-utils/assert"
 )
 
@@ -23,7 +23,7 @@ func TestHmacWithInvalidAlgoReturnError(t *testing.T) {
 			IV:                Aes256cbcGeneratedKey.IV,
 		},
 	}, DecryptedMessage)
-	a.EqualsError(t, err, iron.ErrInvalidHmacAlgorithm)
+	a.EqualsError(t, err, ironerrors.ErrInvalidHmacAlgorithm)
 }
 
 func TestHmacWithValidAlgo(t *testing.T) {

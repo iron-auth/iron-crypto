@@ -1,8 +1,8 @@
 package encryption_test
 
 import (
-	"github.com/iron-auth/iron-tokens/utils/encryption"
-	"github.com/iron-auth/iron-tokens/utils/key"
+	"github.com/iron-auth/iron-crypto/encryption"
+	"github.com/iron-auth/iron-crypto/key"
 )
 
 var (

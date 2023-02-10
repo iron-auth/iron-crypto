@@ -4,10 +4,10 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 
-	"github.com/iron-auth/iron-tokens"
-	"github.com/iron-auth/iron-tokens/utils/bits"
-	"github.com/iron-auth/iron-tokens/utils/key"
-	"github.com/iron-auth/iron-tokens/utils/str"
+	"github.com/iron-auth/iron-crypto/bits"
+	"github.com/iron-auth/iron-crypto/ironerrors"
+	"github.com/iron-auth/iron-crypto/key"
+	"github.com/iron-auth/iron-crypto/str"
 )
 
 type EncryptedData struct {
@@ -28,14 +28,14 @@ func Encrypt(cfg key.Config, message string) (EncryptedData, error) {
 	case key.AES128CTR:
 		return aes128ctrEncrypt(k, message)
 	default:
-		return EncryptedData{}, iron.ErrInvalidEncryptionAlgorithm
+		return EncryptedData{}, ironerrors.ErrInvalidEncryptionAlgorithm
 	}
 }
 
 func aes256cbcEncrypt(k key.GeneratedKey, message string) (EncryptedData, error) {
 	block, err := aes.NewCipher(k.Key)
 	if err != nil {
-		return EncryptedData{}, iron.ErrCreatingCipher
+		return EncryptedData{}, ironerrors.ErrCreatingCipher
 	}
 
 	plainText := bits.Pad(str.ToBuffer(message), aes.BlockSize)
@@ -53,7 +53,7 @@ func aes256cbcEncrypt(k key.GeneratedKey, message string) (EncryptedData, error)
 func aes128ctrEncrypt(k key.GeneratedKey, message string) (EncryptedData, error) {
 	block, err := aes.NewCipher(k.Key)
 	if err != nil {
-		return EncryptedData{}, iron.ErrCreatingCipher
+		return EncryptedData{}, ironerrors.ErrCreatingCipher
 	}
 
 	plainText := str.ToBuffer(message)

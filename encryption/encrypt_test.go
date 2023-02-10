@@ -3,9 +3,9 @@ package encryption_test
 import (
 	"testing"
 
-	"github.com/iron-auth/iron-tokens"
-	"github.com/iron-auth/iron-tokens/utils/encryption"
-	"github.com/iron-auth/iron-tokens/utils/key"
+	"github.com/iron-auth/iron-crypto/encryption"
+	"github.com/iron-auth/iron-crypto/ironerrors"
+	"github.com/iron-auth/iron-crypto/key"
 	a "github.com/james-elicx/go-utils/assert"
 )
 
@@ -70,5 +70,5 @@ func TestSha256EncryptReturnsError(t *testing.T) {
 		},
 	}, DecryptedMessage)
 
-	a.Equals(t, err, iron.ErrInvalidEncryptionAlgorithm)
+	a.Equals(t, err, ironerrors.ErrInvalidEncryptionAlgorithm)
 }

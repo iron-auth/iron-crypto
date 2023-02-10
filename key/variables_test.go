@@ -3,7 +3,7 @@ package key_test
 import (
 	"testing"
 
-	"github.com/iron-auth/iron-tokens/utils/key"
+	"github.com/iron-auth/iron-crypto/key"
 	a "github.com/james-elicx/go-utils/assert"
 )
 

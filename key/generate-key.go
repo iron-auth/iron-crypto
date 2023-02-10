@@ -3,9 +3,9 @@ package key
 import (
 	"crypto/sha1"
 
-	"github.com/iron-auth/iron-tokens"
-	"github.com/iron-auth/iron-tokens/utils/bits"
-	"github.com/iron-auth/iron-tokens/utils/str"
+	"github.com/iron-auth/iron-crypto/bits"
+	"github.com/iron-auth/iron-crypto/ironerrors"
+	"github.com/iron-auth/iron-crypto/str"
 	"golang.org/x/crypto/pbkdf2"
 )
 
@@ -82,13 +82,13 @@ func isOptionsUndefined(options OptionsConfig) bool {
 func Generate(cfg Config) (GeneratedKey, error) {
 	// check password is specificed
 	if cfg.Password == "" && cfg.PasswordBuffer == nil {
-		return GeneratedKey{}, iron.ErrPasswordRequired
+		return GeneratedKey{}, ironerrors.ErrPasswordRequired
 	}
 	if isOptionsUndefined(cfg.Options) {
-		return GeneratedKey{}, iron.ErrMissingOptions
+		return GeneratedKey{}, ironerrors.ErrMissingOptions
 	}
 	if !isAlgorithmValid(cfg.Options.Algorithm) {
-		return GeneratedKey{}, iron.ErrUnsupportedAlgorithm
+		return GeneratedKey{}, ironerrors.ErrUnsupportedAlgorithm
 	}
 
 	algo := algorithms[cfg.Options.Algorithm]
@@ -104,14 +104,14 @@ func Generate(cfg Config) (GeneratedKey, error) {
 	if cfg.Password != "" {
 		// check password length is valid
 		if len(cfg.Password) < cfg.Options.MinPasswordLength {
-			return GeneratedKey{}, iron.ErrPasswordTooShort
+			return GeneratedKey{}, ironerrors.ErrPasswordTooShort
 		}
 
 		salt := cfg.Options.Salt
 		// check salt is specified
 		if salt == "" {
 			if cfg.Options.SaltBits == 0 {
-				return GeneratedKey{}, iron.ErrMissingSalt
+				return GeneratedKey{}, ironerrors.ErrMissingSalt
 			}
 
 			// generate a new salt
@@ -130,7 +130,7 @@ func Generate(cfg Config) (GeneratedKey, error) {
 	} else if cfg.PasswordBuffer != nil {
 		// check password length is valid
 		if len(cfg.PasswordBuffer) < algo.keyBits/8 {
-			return GeneratedKey{}, iron.ErrPasswordBufferTooShort
+			return GeneratedKey{}, ironerrors.ErrPasswordBufferTooShort
 		}
 
 		result.Key = cfg.PasswordBuffer
@@ -143,7 +143,7 @@ func Generate(cfg Config) (GeneratedKey, error) {
 		// generate a new IV
 		iv, err := bits.RandomBits(algo.ivBits)
 		if err != nil {
-			return GeneratedKey{}, iron.ErrGeneratingBytes
+			return GeneratedKey{}, ironerrors.ErrGeneratingBytes
 		}
 
 		result.IV = iv

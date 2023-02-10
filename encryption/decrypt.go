@@ -4,10 +4,10 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 
-	"github.com/iron-auth/iron-tokens"
-	"github.com/iron-auth/iron-tokens/utils/bits"
-	"github.com/iron-auth/iron-tokens/utils/key"
-	"github.com/iron-auth/iron-tokens/utils/str"
+	"github.com/iron-auth/iron-crypto/bits"
+	"github.com/iron-auth/iron-crypto/ironerrors"
+	"github.com/iron-auth/iron-crypto/key"
+	"github.com/iron-auth/iron-crypto/str"
 )
 
 // Encrypt the given string according to the encryption config.
@@ -23,14 +23,14 @@ func Decrypt(cfg key.Config, cipherText []byte) (string, error) {
 	case key.AES128CTR:
 		return aes128ctrDecrypt(k, cipherText)
 	default:
-		return "", iron.ErrInvalidEncryptionAlgorithm
+		return "", ironerrors.ErrInvalidEncryptionAlgorithm
 	}
 }
 
 func aes256cbcDecrypt(k key.GeneratedKey, cipherText []byte) (string, error) {
 	block, err := aes.NewCipher(k.Key)
 	if err != nil {
-		return "", iron.ErrCreatingCipher
+		return "", ironerrors.ErrCreatingCipher
 	}
 
 	plainText := str.MakeBuffer(len(cipherText))
@@ -44,7 +44,7 @@ func aes256cbcDecrypt(k key.GeneratedKey, cipherText []byte) (string, error) {
 func aes128ctrDecrypt(k key.GeneratedKey, cipherText []byte) (string, error) {
 	block, err := aes.NewCipher(k.Key)
 	if err != nil {
-		return "", iron.ErrCreatingCipher
+		return "", ironerrors.ErrCreatingCipher
 	}
 
 	plainText := str.MakeBuffer(len(cipherText))
