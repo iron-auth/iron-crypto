@@ -6,6 +6,7 @@ import (
 	"math"
 
 	"github.com/iron-auth/iron-crypto/ironerrors"
+	"github.com/james-elicx/go-utils/utils"
 )
 
 // Check if the given size is valid
@@ -14,7 +15,7 @@ func isValidSize(size int) error {
 		return ironerrors.ErrInvalidBitsSize
 	}
 
-	// this is the max size of an `ArrayBuffer` in javascript (2^31 - 1) on 32-bit systems
+	// NOTE: this is the max size of an `ArrayBuffer` in javascript (2^31 - 1) on 32-bit systems
 	// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Invalid_array_length
 	if size > (2147483648 / 8) {
 		return ironerrors.ErrInvalidBitsSize
@@ -31,11 +32,8 @@ func RandomBytes(size int) ([]byte, error) {
 
 	buffer := make([]byte, size)
 	_, err := rand.Read(buffer)
-	if err != nil {
-		return nil, ironerrors.ErrGeneratingBytes
-	}
 
-	return buffer, nil
+	return buffer, utils.Ternary(err != nil, ironerrors.ErrGeneratingBytes, nil)
 }
 
 // Generate a random bytes array for the given number of bits

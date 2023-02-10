@@ -29,6 +29,9 @@ func TestSizeError(t *testing.T) {
 
 	_, err = bits.RandomBytes(99999999999999)
 	a.EqualsError(t, err, ironerrors.ErrInvalidBitsSize)
+
+	_, err = bits.RandomSalt(0)
+	a.EqualsError(t, err, ironerrors.ErrInvalidBitsSize)
 }
 
 func TestGetRandomBits(t *testing.T) {

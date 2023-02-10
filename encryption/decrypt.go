@@ -28,10 +28,7 @@ func Decrypt(cfg key.Config, cipherText []byte) (string, error) {
 }
 
 func aes256cbcDecrypt(k key.GeneratedKey, cipherText []byte) (string, error) {
-	block, err := aes.NewCipher(k.Key)
-	if err != nil {
-		return "", ironerrors.ErrCreatingCipher
-	}
+	block, _ := aes.NewCipher(k.Key)
 
 	plainText := str.MakeBuffer(len(cipherText))
 
@@ -42,10 +39,7 @@ func aes256cbcDecrypt(k key.GeneratedKey, cipherText []byte) (string, error) {
 }
 
 func aes128ctrDecrypt(k key.GeneratedKey, cipherText []byte) (string, error) {
-	block, err := aes.NewCipher(k.Key)
-	if err != nil {
-		return "", ironerrors.ErrCreatingCipher
-	}
+	block, _ := aes.NewCipher(k.Key)
 
 	plainText := str.MakeBuffer(len(cipherText))
 

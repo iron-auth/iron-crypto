@@ -62,3 +62,39 @@ func TestSha256DecryptReturnsError(t *testing.T) {
 
 	a.Equals(t, err, ironerrors.ErrInvalidEncryptionAlgorithm)
 }
+
+func TestDecryptFailForInvalidPassword(t *testing.T) {
+	t.Parallel()
+
+	_, err := encryption.Decrypt(key.Config{
+		Password: "",
+		Options: key.OptionsConfig{
+			Algorithm:         key.AES256CBC,
+			Iterations:        2,
+			MinPasswordLength: 32,
+			SaltBits:          256,
+			Salt:              Aes256cbcGeneratedKey.Salt,
+			IV:                Aes256cbcGeneratedKey.IV,
+		},
+	}, Aes256cbcEncryptedPassword)
+
+	a.Equals(t, err, ironerrors.ErrPasswordRequired)
+}
+
+func TestDecryptFailForInvalidAlgo(t *testing.T) {
+	t.Parallel()
+
+	_, err := encryption.Decrypt(key.Config{
+		Password: DecryptedPassword,
+		Options: key.OptionsConfig{
+			Algorithm:         key.SHA256,
+			Iterations:        2,
+			MinPasswordLength: 32,
+			SaltBits:          256,
+			Salt:              Aes256cbcGeneratedKey.Salt,
+			IV:                Aes256cbcGeneratedKey.IV,
+		},
+	}, Aes256cbcEncryptedPassword)
+
+	a.Equals(t, err, ironerrors.ErrInvalidEncryptionAlgorithm)
+}

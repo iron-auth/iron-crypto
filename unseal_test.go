@@ -42,7 +42,7 @@ func TestUnsealFailsWithInvalidSeal(t *testing.T) {
 		LocalTimeOffsetMsec: 0,
 	})
 
-	a.Equals(t, err, ironerrors.ErrBadSealHmac)
+	a.Equals(t, err, ironerrors.ErrInvalidSeal)
 }
 
 func TestUnsealFailsWithInvalidJson(t *testing.T) {
@@ -61,6 +61,42 @@ func TestUnsealFailsWithInvalidJson(t *testing.T) {
 	})
 
 	a.Equals(t, err, ironerrors.ErrUnmarshallingObject)
+}
+
+func TestUnsealFailsWithInvalidB64(t *testing.T) {
+	t.Parallel()
+
+	_, err := iron.Unseal[string](InvalidB64SealedFromGo, pw.UnsealRaw{
+		Password: pw.Password{
+			String: DecryptedPassword,
+		},
+	}, iron.SealConfig{
+		Encryption:          SealEncryption,
+		Integrity:           SealIntegrity,
+		TTL:                 0,
+		TimestampSkewSec:    0,
+		LocalTimeOffsetMsec: 0,
+	})
+
+	a.Equals(t, err, ironerrors.ErrBase64Decode)
+}
+
+func TestUnsealFailsWithInvalidIv(t *testing.T) {
+	t.Parallel()
+
+	_, err := iron.Unseal[string](InvalidIvSealedFromGo, pw.UnsealRaw{
+		Password: pw.Password{
+			String: DecryptedPassword,
+		},
+	}, iron.SealConfig{
+		Encryption:          SealEncryption,
+		Integrity:           SealIntegrity,
+		TTL:                 0,
+		TimestampSkewSec:    0,
+		LocalTimeOffsetMsec: 0,
+	})
+
+	a.Equals(t, err, ironerrors.ErrBase64Decode)
 }
 
 func TestUnsealWorksWithValidJson(t *testing.T) {

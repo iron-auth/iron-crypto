@@ -15,6 +15,7 @@ const (
 	macPrefix string = "Fe26.2"
 )
 
+// Builder for creating and parsing seals.
 type SealBuilder struct {
 	Id         string
 	Salt       string
@@ -28,6 +29,7 @@ type SealBuilder struct {
 	seal    string
 }
 
+// Retrieve the stored HMAC salt.
 func (sb *SealBuilder) GetHmacSalt() string {
 	return sb.macSalt
 }
@@ -43,6 +45,7 @@ func (sb *SealBuilder) retrieveHmac(keyCfg key.Config) (HmacData, error) {
 	return HmacWithPassword(keyCfg, sb.macBase)
 }
 
+// Build a new seal.
 func (sb SealBuilder) Build(keyCfg key.Config) (string, error) {
 	mac, err := sb.retrieveHmac(keyCfg)
 	if err != nil {
@@ -77,7 +80,8 @@ func (sb *SealBuilder) Parse(sealed string, now int64, timestampSkewSec int) err
 			return ironerrors.ErrInvalidSeal
 		}
 
-		if exp <= (now - int64(timestampSkewSec*1000)) {
+		skew := utils.Ternary(timestampSkewSec == 0, 60, utils.Ternary(timestampSkewSec == -1, 0, timestampSkewSec))
+		if exp <= (now - int64(skew*1000)) {
 			return ironerrors.ErrExpiredSeal
 		}
 
@@ -111,6 +115,7 @@ func (sb *SealBuilder) Parse(sealed string, now int64, timestampSkewSec int) err
 // 	return mismatch == 0
 // }
 
+// Verify a seal.
 func (sb SealBuilder) Verify(keyCfg key.Config) error {
 	mac, err := sb.retrieveHmac(keyCfg)
 	if err != nil {

@@ -10,9 +10,12 @@ import (
 	"github.com/iron-auth/iron-crypto/str"
 )
 
+// Data returned from an encryption operation.
 type EncryptedData struct {
+	// Encrypted data.
 	Encrypted []byte
-	Key       key.GeneratedKey
+	// Generated encryption key.
+	Key key.GeneratedKey
 }
 
 // Encrypt the given string according to the encryption config.
@@ -33,10 +36,7 @@ func Encrypt(cfg key.Config, message string) (EncryptedData, error) {
 }
 
 func aes256cbcEncrypt(k key.GeneratedKey, message string) (EncryptedData, error) {
-	block, err := aes.NewCipher(k.Key)
-	if err != nil {
-		return EncryptedData{}, ironerrors.ErrCreatingCipher
-	}
+	block, _ := aes.NewCipher(k.Key)
 
 	plainText := bits.Pad(str.ToBuffer(message), aes.BlockSize)
 	cipherText := str.MakeBuffer(len(plainText))
@@ -51,10 +51,7 @@ func aes256cbcEncrypt(k key.GeneratedKey, message string) (EncryptedData, error)
 }
 
 func aes128ctrEncrypt(k key.GeneratedKey, message string) (EncryptedData, error) {
-	block, err := aes.NewCipher(k.Key)
-	if err != nil {
-		return EncryptedData{}, ironerrors.ErrCreatingCipher
-	}
+	block, _ := aes.NewCipher(k.Key)
 
 	plainText := str.ToBuffer(message)
 	cipherText := str.MakeBuffer(len(plainText))

@@ -1,10 +1,14 @@
 package key
 
+// The type of encryption algorithm to use.
 type Algorithm int64
 
 const (
+	// AES-256-CBC.
 	AES256CBC Algorithm = iota
+	// AES-128-CTR.
 	AES128CTR
+	// SHA-256.
 	SHA256
 )
 

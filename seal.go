@@ -10,21 +10,58 @@ import (
 	"github.com/james-elicx/go-utils/utils"
 )
 
+// Seal config options for encryption and integrity.
 type SealConfigOptions struct {
-	Algorithm         key.Algorithm
-	Iterations        int
+	// Algorithm to use for encryption or integrity.
+	//
+	// AES256CBC or AES128CTR for encryption. SHA256 for integrity.
+	Algorithm key.Algorithm
+	// Number of iterations to use when deriving a key from the password.
+	Iterations int
+	// Minimum length of the password.
 	MinPasswordLength int
-	SaltBits          int
+	// Number of bits to use for the random salt.
+	SaltBits int
 }
 
+// Config options for a seal.
 type SealConfig struct {
-	Encryption          SealConfigOptions
-	Integrity           SealConfigOptions
-	TTL                 int
-	TimestampSkewSec    int
+	// Encryption config options.
+	Encryption SealConfigOptions
+	// Integrity config options.
+	Integrity SealConfigOptions
+	// Time to live in seconds - how long the sealed message is valid for.
+	//
+	// 0 means it is valid forever.
+	TTL int
+	// Maximum skew allowed in seconds for incoming expirations.
+	//
+	// Defaults to 60 seconds. Set to -1 to disable.
+	TimestampSkewSec int
+	// Local time offset in milliseconds.
 	LocalTimeOffsetMsec int
 }
 
+var (
+	// Default encryption options.
+	DefaultEncryption = SealConfigOptions{
+		Algorithm:         key.AES256CBC,
+		Iterations:        1,
+		MinPasswordLength: 32,
+		SaltBits:          256,
+	}
+	// Default integrity options.
+	DefaultIntegrity = SealConfigOptions{
+		Algorithm:         key.SHA256,
+		Iterations:        1,
+		MinPasswordLength: 32,
+		SaltBits:          256,
+	}
+)
+
+// Seal a message with a password according to the options in the seal options.
+//
+// Returns a string that can be unsealed with the same password and options.
 func Seal[T any](message T, password pw.Raw, cfg SealConfig) (string, error) {
 	now := time.Now().UnixMilli() + int64(cfg.LocalTimeOffsetMsec/1000)
 
@@ -76,9 +113,5 @@ func Seal[T any](message T, password pw.Raw, cfg SealConfig) (string, error) {
 		},
 	})
 
-	if err != nil {
-		return "", err
-	}
-
-	return sealed, nil
+	return sealed, err
 }

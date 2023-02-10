@@ -12,6 +12,7 @@ func Pad(message []byte, blockSize int) []byte {
 	return append(message, text...)
 }
 
+// Unpad the given message.
 func Unpad(message []byte) []byte {
 	messageLength := len(message)
 	paddingLength := int(message[messageLength-1])

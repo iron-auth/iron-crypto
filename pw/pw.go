@@ -6,31 +6,52 @@ import (
 	"github.com/iron-auth/iron-crypto/ironerrors"
 )
 
+// A string or byte buffer that can be used as a password.
+//
+// Only supply one of the options.
 type Password struct {
+	// A string to use for the password.
 	String string
+	// A byte buffer to use for the password.
 	Buffer []byte
 }
 
+// A password with an ID.
 type Secret struct {
-	Id     string
+	// The ID of the password.
+	Id string
+	// The password.
 	Secret Password
 }
 
+// A password with an ID and encryption and integrity passwords.
 type Specific struct {
-	Id         string
+	// The ID of the password.
+	Id string
+	// The password to use for encryption.
 	Encryption Password
-	Integrity  Password
+	// The password to use for integrity.
+	Integrity Password
 }
 
+// A password that can be a string/buffer, secret or specific.
+//
+// Only supply one of the options.
 type Raw struct {
+	// A string or byte buffer password.
 	Password
+	// A password with an ID.
 	Secret
+	// A password with an ID and encryption and integrity passwords.
 	Specific
 }
 
+// A password that can be a string/buffer, or a map of password IDs to passwords.
 type UnsealRaw struct {
+	// A string or byte buffer password.
 	Password Password
-	Map      map[string]Raw
+	// A map of password IDs to passwords that can be string/buffer, secret or specific.
+	Map map[string]Raw
 }
 
 func normalisePassword(raw Raw) (Specific, error) {
@@ -69,6 +90,7 @@ func validatePassword(raw Specific) error {
 	return nil
 }
 
+// Normalise a password.
 func Normalise(raw Raw) (Specific, error) {
 	normalised, err := normalisePassword(raw)
 	if err != nil {
@@ -82,6 +104,7 @@ func Normalise(raw Raw) (Specific, error) {
 	return normalised, nil
 }
 
+// Normalise an unseal password.
 func NormaliseUnseal(raw UnsealRaw, passwordId string) (Specific, error) {
 	if raw.Password.String == "" && len(raw.Password.Buffer) == 0 && len(raw.Map) == 0 {
 		return Specific{}, ironerrors.ErrPasswordRequired

@@ -73,7 +73,7 @@ var (
 	}
 )
 
-// needed as we cannot check the struct is empty due to the iv being []byte
+// NOTE: needed as we cannot check the struct is empty due to the iv being []byte
 func isOptionsUndefined(options OptionsConfig) bool {
 	return options.Algorithm == 0 && options.Iterations == 0 && options.MinPasswordLength == 0 && options.SaltBits == 0 && options.Salt == "" && options.IV == nil
 }
@@ -92,13 +92,6 @@ func Generate(cfg Config) (GeneratedKey, error) {
 	}
 
 	algo := algorithms[cfg.Options.Algorithm]
-
-	// hmac := cfg.Options.HMAC
-	// usage := []string{"encrypt", "decrypt"}
-	// if hmac {
-	// 	usage = []string{"sign", "verify"}
-	// }
-
 	result := GeneratedKey{Algorithm: cfg.Options.Algorithm}
 
 	if cfg.Password != "" {
@@ -142,11 +135,9 @@ func Generate(cfg Config) (GeneratedKey, error) {
 	} else if algo.ivBits > 0 {
 		// generate a new IV
 		iv, err := bits.RandomBits(algo.ivBits)
-		if err != nil {
-			return GeneratedKey{}, ironerrors.ErrGeneratingBytes
-		}
-
 		result.IV = iv
+
+		return result, err
 	}
 
 	return result, nil

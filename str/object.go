@@ -6,7 +6,7 @@ import (
 	"github.com/iron-auth/iron-crypto/ironerrors"
 )
 
-// converts anything of type T to a string.
+// Converts anything of type T to a string.
 func FromObject[T any](v T) (string, error) {
 	b, err := json.Marshal(v)
 	if err != nil {
@@ -16,7 +16,7 @@ func FromObject[T any](v T) (string, error) {
 	return FromBuffer(b), nil
 }
 
-// converts a string to anything of type T.
+// Converts a string to anything of type T.
 func ToObject[T any](v string) (T, error) {
 	var obj T
 

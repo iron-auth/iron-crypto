@@ -72,3 +72,21 @@ func TestSha256EncryptReturnsError(t *testing.T) {
 
 	a.Equals(t, err, ironerrors.ErrInvalidEncryptionAlgorithm)
 }
+
+func TestEncryptFailForInvalidPassword(t *testing.T) {
+	t.Parallel()
+
+	_, err := encryption.Encrypt(key.Config{
+		Password: "",
+		Options: key.OptionsConfig{
+			Algorithm:         key.AES256CBC,
+			Iterations:        2,
+			MinPasswordLength: 32,
+			SaltBits:          256,
+			Salt:              Aes256cbcGeneratedKey.Salt,
+			IV:                Aes256cbcGeneratedKey.IV,
+		},
+	}, DecryptedMessage)
+
+	a.Equals(t, err, ironerrors.ErrPasswordRequired)
+}

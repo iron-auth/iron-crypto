@@ -9,12 +9,17 @@ import (
 	"github.com/iron-auth/iron-crypto/str"
 )
 
+// Unseal a sealed value into an object of the supplied generic type, using the password and seal options.
+//
+// The sealed value must have been sealed using the same password and seal options.
 func Unseal[T any](sealed string, password pw.UnsealRaw, cfg SealConfig) (T, error) {
 	var obj T
 	now := time.Now().UnixMilli() + int64(cfg.LocalTimeOffsetMsec)
 
 	sb := encryption.SealBuilder{}
-	sb.Parse(sealed, now, cfg.TimestampSkewSec)
+	if err := sb.Parse(sealed, now, cfg.TimestampSkewSec); err != nil {
+		return obj, err
+	}
 
 	pass, err := pw.NormaliseUnseal(password, sb.Id)
 	if err != nil {
@@ -57,14 +62,13 @@ func Unseal[T any](sealed string, password pw.UnsealRaw, cfg SealConfig) (T, err
 			IV:                ivBytes,
 		},
 	}, encrypted)
-	if err != nil {
-		return obj, err
+
+	if err == nil {
+		obj, err = str.ToObject[T](decrypted)
+		if err != nil {
+			return obj, err
+		}
 	}
 
-	obj, err = str.ToObject[T](decrypted)
-	if err != nil {
-		return obj, err
-	}
-
-	return obj, nil
+	return obj, err
 }

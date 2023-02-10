@@ -4,11 +4,13 @@ import "errors"
 
 var (
 	// algorithms
+
 	ErrUnsupportedAlgorithm       = errors.New("unsupported algorithm")
 	ErrInvalidEncryptionAlgorithm = errors.New("invalid encryption algorithm")
 	ErrInvalidHmacAlgorithm       = errors.New("invalid hmac algorithm")
 
 	// key options
+
 	ErrInvalidBitsSize        = errors.New("bits size must be greater than 0 and less than 2147483648")
 	ErrMissingOptions         = errors.New("missing options")
 	ErrPasswordRequired       = errors.New("password or password buffer is required")
@@ -18,6 +20,7 @@ var (
 	ErrMissingSalt            = errors.New("missing salt and salt bits")
 
 	// seal
+
 	ErrInvalidSeal         = errors.New("invalid seal")
 	ErrExpiredSeal         = errors.New("expired seal")
 	ErrVerifyingSeal       = errors.New("error verifying seal")
@@ -26,6 +29,7 @@ var (
 	ErrUnmarshallingObject = errors.New("error unmarshalling object")
 
 	// generating values
+
 	ErrCreatingCipher  = errors.New("error creating cipher")
 	ErrGeneratingSalt  = errors.New("error generating salt")
 	ErrGeneratingBytes = errors.New("error generating bytes")
