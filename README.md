@@ -16,7 +16,7 @@ Check out the documentation site for information about using Iron Crypto - Comin
 
 ## Roadmap
 
-- [ ] Full Golang implementation of iron-webcrypto / @hapi/iron
+- [x] Full Golang implementation of iron-webcrypto / @hapi/iron
 
 ## Security
 
