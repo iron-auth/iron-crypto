@@ -1,4 +1,4 @@
-module github.com/iron-auth/iron-tokens
+module github.com/iron-auth/iron-crypto
 
 go 1.19
 

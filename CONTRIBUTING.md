@@ -27,20 +27,20 @@ You can either use a cloud development environment or clone the repository to yo
 
 We include a configuration file for [Gitpod](https://www.gitpod.io) in the repository. To use Gitpod, simply click the button below:
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/iron-auth/iron-tokens)
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/iron-auth/iron-crypto)
 
 #### Cloning the Repository
 
 You can clone the repository to your hard drive and run the following commands:
 
 ```bash
-git clone https://github.com/iron-auth/iron-tokens
-cd iron-tokens
+git clone https://github.com/iron-auth/iron-crypto
+cd iron-crypto
 ```
 
 ## Reporting Issues
 
-For security issues, please refer to our [security policy](https://github.com/iron-auth/iron-tokens/blob/main/SECURITY.md).
+For security issues, please refer to our [security policy](https://github.com/iron-auth/iron-crypto/blob/main/SECURITY.md).
 
 If you find a bug, please report it by opening a new issue and including the following information:
 
