@@ -54,25 +54,34 @@ type UnsealRaw struct {
 	Map map[string]Raw
 }
 
+func isValidPassword(p Password) bool {
+	return p.String != "" || len(p.Buffer) != 0
+}
+
 func normalisePassword(raw Raw) (Specific, error) {
-	if raw.Password.String != "" || len(raw.Password.Buffer) != 0 {
+	if isValidPassword(raw.Password) {
 		return Specific{
 			Id:         "",
 			Encryption: raw.Password,
 			Integrity:  raw.Password,
 		}, nil
-	} else if raw.Secret.Secret.String != "" || len(raw.Secret.Secret.Buffer) != 0 {
+	}
+
+	if isValidPassword(raw.Secret.Secret) {
 		return Specific{
 			Id:         raw.Secret.Id,
 			Encryption: raw.Secret.Secret,
 			Integrity:  raw.Secret.Secret,
 		}, nil
-	} else if (raw.Specific.Encryption.String != "" || len(raw.Specific.Encryption.Buffer) != 0) && (raw.Specific.Integrity.String != "" || len(raw.Specific.Integrity.Buffer) != 0) {
+	}
+
+	if isValidPassword(raw.Specific.Encryption) && isValidPassword(raw.Specific.Integrity) {
 		return raw.Specific, nil
 	}
 
 	return Specific{}, ironerrors.ErrPasswordRequired
 }
+
 func isLettersOnly(s string) bool {
 	for _, r := range s {
 		if !unicode.IsLetter(r) {
